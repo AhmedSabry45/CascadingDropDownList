@@ -1,0 +1,60 @@
+﻿
+@model ViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<form>
+    <label asp-for="CityId"></label>
+
+    <select class="form-select" asp-for="CityId" asp-items="@(new SelectList(Model.Cities,"Id","Name"))">
+        <option></option>
+    </select>
+
+     <label asp-for="AreaId"></label>
+
+    <select class="form-select" asp-for="AreaId" asp-items="@(new SelectList(Model.Areas,"Id","Name"))">
+        <option></option>
+    </select>
+</form>
+
+@section Scripts{
+    <script>
+    $(document).ready(function(){
+        $('#CityId').on('change',function(){
+            //console.log($(this).val());
+           var cityId=$(this).val();
+
+            var areaList= $('#AreaId');
+
+            //before send request must remove first Request
+            areaList.empty();
+            //add empty option
+            areaList.append('<option></option>');
+
+            if(cityId!==''){
+                $.ajax({
+                url: '/Home/GetAreas?cityId=' + cityId,
+                success:function(areas){
+                   // console.log(areas);
+                    //loop for Areas return from controller
+                    $.each(areas,function(i,area){
+                        
+                       $('#AreaId').append($('<option></option>').attr('value',area.id).text(area.Name);
+                    });
+                },
+                error:function(){
+                    alert('Something went wrong!!!');
+                }
+            });
+            }
+            
+
+        });
+    });
+    
+    
+    </script>
+}
